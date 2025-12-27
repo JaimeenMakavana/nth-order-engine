@@ -92,3 +92,4 @@ export async function cartRoutes(fastify: FastifyInstance) {
   }, clearCart);
 }
 
+

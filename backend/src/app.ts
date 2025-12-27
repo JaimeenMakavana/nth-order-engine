@@ -1,4 +1,5 @@
 import Fastify from "fastify";
+import cors from "@fastify/cors";
 import { config } from "./config.js";
 import { errorHandler } from "./middleware/error.handler.js";
 import { logger, responseLogger } from "./middleware/logger.js";
@@ -44,6 +45,29 @@ async function buildApp(options?: {
   }
   const app = Fastify({
     logger: options?.logger ?? true, // Enable Fastify's built-in logger by default
+  });
+
+  // Register CORS plugin
+  await app.register(cors, {
+    origin: (
+      origin: string | undefined,
+      cb: (err: Error | null, allow: boolean) => void
+    ) => {
+      // Allow requests from localhost (any port) in development
+      if (
+        !origin ||
+        origin.includes("localhost") ||
+        origin.includes("127.0.0.1")
+      ) {
+        cb(null, true);
+        return;
+      }
+      // In production, you can add specific allowed origins here
+      cb(null, true);
+    },
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   });
 
   // Configure content type parser to allow empty JSON bodies

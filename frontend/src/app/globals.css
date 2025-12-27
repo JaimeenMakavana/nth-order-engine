@@ -12,14 +12,14 @@
 }
 
 @theme inline {
-  /* Custom Colors - Obsidian Theme */
-  --color-background-main: var(--background-main);
-  --color-grid-surface: var(--grid-surface);
-  --color-primary-accent: var(--primary-accent);
-  --color-secondary-accent: var(--secondary-accent);
-  --color-borders: var(--borders);
-  --color-premium-glow: var(--premium-glow);
-  --color-foreground: var(--foreground);
+  /* Custom Colors - Obsidian Theme (Tailwind v4 format) */
+  --color-background-main: #050505;
+  --color-grid-surface: #121212;
+  --color-primary-accent: #00FF41;
+  --color-secondary-accent: #FFB000;
+  --color-borders: #333333;
+  --color-premium-glow: #8B5CF6;
+  --color-foreground: #ededed;
   
   /* Shadcn/UI compatible color variables */
   --background: var(--background-main);
