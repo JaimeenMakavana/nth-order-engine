@@ -122,3 +122,10 @@ src/
 
 
 => so apart from requirement mention in doc, i have found out that there is requirement of integration testing for coupen double spend , so i need to ensure that once a coupon is used in a successful checkout, it cannot be reused for a subsequent order. so I have implement this test.
+
+
+---
+
+## 5. what am i thinking write now for further implementation
+
+- so in current implementation, i feel there are few changes required like user friendly messags, some response schema might need to change but for now, its good to go and ready for the frontend implementation.
