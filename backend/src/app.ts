@@ -2,6 +2,7 @@ import Fastify from "fastify";
 import { config } from "./config.js";
 import { errorHandler } from "./middleware/error.handler.js";
 import { logger } from "./middleware/logger.js";
+import { checkoutRoutes } from "./controllers/checkout.controller.js";
 
 /**
  * Bootstrap the Fastify server
@@ -22,10 +23,11 @@ async function buildApp() {
     return { status: "ok", timestamp: new Date().toISOString() };
   });
 
-  // TODO: Register routes
-  // app.register(cartRoutes, { prefix: "/api/cart" });
-  // app.register(checkoutRoutes, { prefix: "/api/checkout" });
-  // app.register(adminRoutes, { prefix: "/api/admin" });
+  // Register routes
+  await app.register(checkoutRoutes);
+  // TODO: Register other routes
+  // app.register(cartRoutes);
+  // app.register(adminRoutes);
 
   return app;
 }
