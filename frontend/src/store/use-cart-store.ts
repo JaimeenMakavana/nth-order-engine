@@ -10,6 +10,7 @@ interface CartStore {
   updateQuantity: (productId: string, quantity: number) => void;
   clearCart: () => void;
   setProducts: (products: Product[]) => void;
+  setItems: (items: CartItem[]) => void;
   getItemCount: () => number;
 }
 
@@ -63,6 +64,10 @@ export const useCartStore = create<CartStore>((set, get) => ({
 
   setProducts: (products: Product[]) => {
     set({ products });
+  },
+
+  setItems: (items: CartItem[]) => {
+    set({ items });
   },
 
   getItemCount: () => {

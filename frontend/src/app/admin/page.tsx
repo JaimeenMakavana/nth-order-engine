@@ -3,6 +3,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiClient } from "@/lib/api-client";
 import { Button } from "@/components/ui/button";
+import { StatisticsShimmer } from "@/components/ui/shimmer";
 import { BarChart3, Gift, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 
@@ -38,14 +39,14 @@ export default function AdminPage() {
             disabled={generateCouponMutation.isPending}
           >
             <Gift className="h-4 w-4 mr-2" />
-            {generateCouponMutation.isPending ? "Generating..." : "Generate Coupon"}
+            {generateCouponMutation.isPending
+              ? "Generating..."
+              : "Generate Coupon"}
           </Button>
         </div>
 
         {isLoading ? (
-          <div className="text-center py-12 text-muted-foreground">
-            Loading statistics...
-          </div>
+          <StatisticsShimmer />
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             <div className="border border-borders rounded-lg p-6 bg-grid-surface">

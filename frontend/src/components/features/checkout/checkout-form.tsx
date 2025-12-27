@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiClient } from "@/lib/api-client";
 import { useCartStore } from "@/store/use-cart-store";
 import { useRewardReveal } from "@/hooks/use-reward-reveal";
+import { cartKeys, couponKeys } from "@/hooks/use-cart-actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
@@ -13,23 +14,38 @@ import type { CheckoutRequest } from "@/lib/validators/checkout.schema";
 
 export function CheckoutForm() {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const { items } = useCartStore();
   const { reveal } = useRewardReveal();
   const [discountCode, setDiscountCode] = useState("");
+  const setItems = useCartStore((state) => state.setItems);
 
   const checkoutMutation = useMutation({
     mutationFn: (data: CheckoutRequest) => apiClient.checkout(data),
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
       toast.success("Order placed successfully!");
-      
+
       // Show reward if available
       if (data.reward) {
         reveal(data.reward);
       }
-      
-      // Clear cart
-      useCartStore.getState().clearCart();
-      
+
+      // Clear cart in frontend store
+      setItems([]);
+
+      // Sync with backend - fetch empty cart to ensure consistency
+      try {
+        const emptyCart = await apiClient.getCart();
+        queryClient.setQueryData(cartKeys.cart(), emptyCart);
+        setItems(emptyCart.items);
+      } catch (error) {
+        // If fetch fails, still clear local state
+        queryClient.setQueryData(cartKeys.cart(), { items: [], subtotal: 0 });
+      }
+
+      // Invalidate coupon message query to refresh the reward status
+      queryClient.invalidateQueries({ queryKey: couponKeys.message() });
+
       // Redirect to home
       setTimeout(() => {
         router.push("/");
@@ -42,7 +58,7 @@ export function CheckoutForm() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (items.length === 0) {
       toast.error("Your cart is empty");
       return;
@@ -84,4 +100,3 @@ export function CheckoutForm() {
     </form>
   );
 }
-

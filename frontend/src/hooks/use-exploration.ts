@@ -6,6 +6,7 @@ import { useExplorationStore } from "@/store/use-exploration-store";
 export function useExploration() {
   const pathname = usePathname();
   const visitRoute = useExplorationStore((state) => state.visitRoute);
+
   const lastPathnameRef = useRef<string | null>(null);
 
   useEffect(() => {
@@ -19,7 +20,6 @@ export function useExploration() {
   // Return selective subscriptions to prevent unnecessary re-renders
   return {
     visitedRoutes: useExplorationStore((state) => state.visitedRoutes),
-    decodedText: useExplorationStore((state) => state.decodedText),
     progress: useExplorationStore((state) => state.progress),
     reset: useExplorationStore((state) => state.reset),
   };

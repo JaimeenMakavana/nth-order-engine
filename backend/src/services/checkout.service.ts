@@ -94,6 +94,9 @@ export class CheckoutService {
     // Save order to store
     store.addOrder(order);
 
+    // Clear the cart after successful checkout
+    store.clearCart();
+
     return {
       order,
       discountApplied,

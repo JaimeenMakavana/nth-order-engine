@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiClient } from "@/lib/api-client";
 import { useCartStore } from "@/store/use-cart-store";
 import { toast } from "sonner";
+import type { CartItem } from "@/types/ecommerce";
 
 // Query keys
 export const cartKeys = {
@@ -13,6 +14,11 @@ export const cartKeys = {
 export const productKeys = {
   all: ["products"] as const,
   products: () => [...productKeys.all, "list"] as const,
+};
+
+export const couponKeys = {
+  all: ["coupon"] as const,
+  message: () => [...couponKeys.all, "message"] as const,
 };
 
 // Products query
@@ -35,7 +41,7 @@ export function useCart() {
 // Add item mutation
 export function useAddCartItem() {
   const queryClient = useQueryClient();
-  const addItem = useCartStore((state) => state.addItem);
+  const setItems = useCartStore((state) => state.setItems);
 
   return useMutation({
     mutationFn: ({
@@ -47,7 +53,8 @@ export function useAddCartItem() {
     }) => apiClient.addCartItem(productId, quantity),
     onSuccess: (data) => {
       queryClient.setQueryData(cartKeys.cart(), data);
-      addItem(data.items[data.items.length - 1]?.productId || "", 0);
+      // Sync the entire cart state from API response
+      setItems(data.items);
       toast.success("Item added to cart");
     },
     onError: (error: Error) => {
@@ -71,5 +78,15 @@ export function useClearCart() {
     onError: (error: Error) => {
       toast.error(error.message || "Failed to clear cart");
     },
+  });
+}
+
+// Coupon message query - fetches the reward status message
+export function useCouponMessage() {
+  return useQuery({
+    queryKey: couponKeys.message(),
+    queryFn: () => apiClient.generateCoupon(),
+    select: (data) => data.message,
+    staleTime: 30 * 1000, // 30 seconds
   });
 }

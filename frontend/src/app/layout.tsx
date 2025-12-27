@@ -43,13 +43,11 @@ export default function RootLayout({
             <DecryptionBar />
             <div className="flex pt-12">
               <Sidebar />
-              <main className="flex-1 ml-64">
-                {children}
-              </main>
+              <main className="flex-1 ml-64">{children}</main>
             </div>
             <RewardReveal />
             <Toaster
-              position="top-right"
+              position="top-center"
               theme="dark"
               toastOptions={{
                 style: {

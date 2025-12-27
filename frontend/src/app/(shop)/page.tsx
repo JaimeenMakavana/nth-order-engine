@@ -3,16 +3,17 @@
 import { useProducts, useAddCartItem } from "@/hooks/use-cart-actions";
 import { useCartStore } from "@/store/use-cart-store";
 import { Button } from "@/components/ui/button";
-import { ShoppingCart, Plus } from "lucide-react";
+import { ShoppingCart } from "lucide-react";
 import { useState } from "react";
-import { CartDrawer } from "@/components/features/cart/cart-drawer";
-import { motion } from "framer-motion";
+import { CartModal } from "@/components/features/cart/cart-modal";
+import { ProductCard } from "@/components/features/cart/product-card";
+import { ProductCardSkeleton } from "@/components/features/cart/product-card-skeleton";
 
 export default function ShopPage() {
   const { data: products, isLoading } = useProducts();
   const addCartItemMutation = useAddCartItem();
   const [cartOpen, setCartOpen] = useState(false);
-  const itemCount = useCartStore((state) => 
+  const itemCount = useCartStore((state) =>
     state.items.reduce((sum, item) => sum + item.quantity, 0)
   );
 
@@ -40,39 +41,26 @@ export default function ShopPage() {
       </div>
 
       {isLoading ? (
-        <div className="text-center py-12 text-muted-foreground">
-          Loading products...
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {Array.from({ length: 8 }).map((_, index) => (
+            <ProductCardSkeleton key={index} />
+          ))}
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {products?.map((product, index) => (
-            <motion.div
+            <ProductCard
               key={product.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
-              className="border border-borders rounded-lg p-6 bg-grid-surface hover:border-primary-accent/50 transition-colors"
-            >
-              <div className="mb-4">
-                <h3 className="text-lg font-semibold mb-2">{product.name}</h3>
-                <p className="text-2xl font-bold text-primary-accent">
-                  ${product.price.toFixed(2)}
-                </p>
-              </div>
-              <Button
-                className="w-full"
-                onClick={() => handleAddToCart(product.id)}
-                disabled={addCartItemMutation.isPending}
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                Add to Cart
-              </Button>
-            </motion.div>
+              product={product}
+              onAddToCart={handleAddToCart}
+              isAdding={addCartItemMutation.isPending}
+              index={index}
+            />
           ))}
         </div>
       )}
 
-      <CartDrawer isOpen={cartOpen} onClose={() => setCartOpen(false)} />
+      <CartModal isOpen={cartOpen} onClose={() => setCartOpen(false)} />
     </div>
   );
 }

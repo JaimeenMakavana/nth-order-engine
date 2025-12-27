@@ -3,14 +3,17 @@
 import Link from "next/link";
 import { ShoppingCart, Package, Settings } from "lucide-react";
 import { useCartStore } from "@/store/use-cart-store";
+import { useCouponMessage } from "@/hooks/use-cart-actions";
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
 
 export function Sidebar() {
-  const itemCount = useCartStore((state) => 
+  const itemCount = useCartStore((state) =>
     state.items.reduce((sum, item) => sum + item.quantity, 0)
   );
   const pathname = usePathname();
+  const { data: couponMessage, isLoading: isLoadingMessage } =
+    useCouponMessage();
 
   const navItems = [
     { href: "/", label: "Shop", icon: Package },
@@ -24,7 +27,7 @@ export function Sidebar() {
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive = pathname === item.href;
-          
+
           return (
             <Link
               key={item.href}
@@ -47,10 +50,14 @@ export function Sidebar() {
           );
         })}
       </nav>
-      
+
       <div className="absolute bottom-4 left-4 right-4 p-4 bg-background-main/50 rounded-md border border-borders">
         <p className="text-xs text-muted-foreground">
-          🎁 Every 4th order unlocks a reward!
+          {isLoadingMessage ? (
+            "Loading..."
+          ) : (
+            <>🎁 {couponMessage || "Every 4th order unlocks a reward!"}</>
+          )}
         </p>
       </div>
     </aside>

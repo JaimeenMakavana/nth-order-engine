@@ -15,13 +15,6 @@ const ROUTES = [
   // Add more routes as needed
 ];
 
-const decodeBinary = (binary: string): string => {
-  return binary
-    .split(" ")
-    .map((bin) => String.fromCharCode(parseInt(bin, 2)))
-    .join("");
-};
-
 export const useExplorationStore = create<ExplorationStore>((set, get) => ({
   visitedRoutes: new Set(),
   decodedText: "",
@@ -34,11 +27,6 @@ export const useExplorationStore = create<ExplorationStore>((set, get) => ({
     if (!newVisitedRoutes.has(route)) {
       newVisitedRoutes.add(route);
       
-      // Generate binary representation based on visited routes
-      const binaryArray = ROUTES.map((r) => (newVisitedRoutes.has(r) ? "1" : "0"));
-      const binaryString = binaryArray.join(" ");
-      const decoded = decodeBinary(binaryString);
-      
       const progress = Math.min(
         (newVisitedRoutes.size / ROUTES.length) * 100,
         100
@@ -46,7 +34,7 @@ export const useExplorationStore = create<ExplorationStore>((set, get) => ({
 
       set({
         visitedRoutes: newVisitedRoutes,
-        decodedText: decoded || binaryString,
+        decodedText: "",
         progress: Math.floor(progress),
       });
     }

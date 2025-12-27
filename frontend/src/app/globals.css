@@ -4,10 +4,10 @@
   /* Obsidian Theme - Custom Color Palette */
   --background-main: #050505;
   --grid-surface: #121212;
-  --primary-accent: #00FF41;
-  --secondary-accent: #FFB000;
+  --primary-accent: #00ff41;
+  --secondary-accent: #ffb000;
   --borders: #333333;
-  --premium-glow: #8B5CF6;
+  --premium-glow: #8b5cf6;
   --foreground: #ededed;
 }
 
@@ -15,12 +15,12 @@
   /* Custom Colors - Obsidian Theme (Tailwind v4 format) */
   --color-background-main: #050505;
   --color-grid-surface: #121212;
-  --color-primary-accent: #00FF41;
-  --color-secondary-accent: #FFB000;
+  --color-primary-accent: #00ff41;
+  --color-secondary-accent: #ffb000;
   --color-borders: #333333;
-  --color-premium-glow: #8B5CF6;
+  --color-premium-glow: #8b5cf6;
   --color-foreground: #ededed;
-  
+
   /* Shadcn/UI compatible color variables */
   --background: var(--background-main);
   --foreground: var(--foreground);
@@ -42,7 +42,7 @@
   --input: var(--borders);
   --ring: var(--primary-accent);
   --radius: 0.5rem;
-  
+
   /* Fonts */
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
@@ -52,4 +52,13 @@ body {
   background: var(--background-main);
   color: var(--foreground);
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
 }
