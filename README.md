@@ -73,3 +73,39 @@ In this model, the action is predictable (every 4th order), but the outcome is a
 The assignment asks for a "10% discount." By setting 10% as  base reward (the most common drop), I am following the rules while adding "Surprise and Delight" for the rare 15% or 25% drops.
 
 ---
+
+## 3. backend architecture deciding 
+
+so for backend, i decided the best practices used in deciding folder structure for fastify 
+
+src/
+├── app.ts                  # Bootstraps the server (Fastify) & connects middleware
+├── config.ts               # Environment variables (N=4, port, etc.)
+│
+├── controllers/            # Entry points: Extracts data from Request -> Service
+│   ├── cart.controller.ts     # Handles adding/removing items
+│   ├── checkout.controller.ts # Handles order placement & reward triggers
+│   └── admin.controller.ts   # Handles stats & manual coupon generation
+│
+├── services/               # The "Brain": Business logic & N-logic calculations
+│   ├── cart.service.ts       # Logic for totals and item management
+│   ├── checkout.service.ts   # Coordinates order saving and reward eligibility
+│   └── reward.service.ts     # EXCLUSIVE: Weighted random logic for variable discount
+│
+├── repository/             # The "Memory": Direct interaction with In-Memory store
+│   └── store.repository.ts   # Singleton class holding Orders[], Cart[], Coupons[]
+│
+├── schemas/                # The "Guard": Data validation using Zod
+│   ├── checkout.schema.ts    # Validates correct coupon and user data format
+│   └── product.schema.ts     # Validates item structure
+│
+├── middleware/             # Interceptors
+│   ├── error.handler.ts      # Global catch for 400/500 errors
+│   └── logger.ts             # Logs API requests (important for evaluation)
+│
+├── types/                  # Shared TypeScript Interfaces
+│   └── index.ts              # Definitions for Order, Coupon, RewardTier
+│
+└── __tests__/              # Proof of Quality
+    ├── nth-logic.test.ts     # Specifically tests if N=4 triggers a reward
+    └── probability.test.ts   # Verifies the 80/15/5 distribution split
