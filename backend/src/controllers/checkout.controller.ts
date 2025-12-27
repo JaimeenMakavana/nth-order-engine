@@ -81,8 +81,35 @@ export async function checkoutRoutes(fastify: FastifyInstance) {
             type: "object",
             properties: {
               success: { type: "boolean" },
-              order: { type: "object" },
-              reward: { type: "object" },
+              order: {
+                type: "object",
+                properties: {
+                  id: { type: "string" },
+                  items: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        productId: { type: "string" },
+                        quantity: { type: "number" },
+                      },
+                    },
+                  },
+                  totalAmount: { type: "number" },
+                  discountApplied: { type: "number" },
+                  finalAmount: { type: "number" },
+                  timestamp: { type: "string" },
+                },
+              },
+              reward: {
+                type: "object",
+                properties: {
+                  code: { type: "string" },
+                  discountPercent: { type: "number" },
+                  tier: { type: "string" },
+                  message: { type: "string" },
+                },
+              },
             },
           },
         },
