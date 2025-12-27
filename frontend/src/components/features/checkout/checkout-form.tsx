@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { apiClient } from "@/lib/api-client";
 import { useCartStore } from "@/store/use-cart-store";
@@ -19,6 +19,7 @@ export function CheckoutForm() {
   const { reveal } = useRewardReveal();
   const [discountCode, setDiscountCode] = useState("");
   const setItems = useCartStore((state) => state.setItems);
+  const hasAutoAppliedRef = useRef(false);
 
   // Fetch stats to get available coupons
   const { data: stats } = useQuery({
@@ -26,15 +27,16 @@ export function CheckoutForm() {
     queryFn: () => apiClient.getStats(),
   });
 
-  // Auto-apply the first available (unused) coupon
+  // Auto-apply the first available (unused) coupon only once when stats are loaded
   useEffect(() => {
-    if (stats?.discountCodes && discountCode === "") {
+    if (stats?.discountCodes && !hasAutoAppliedRef.current) {
       const availableCoupon = stats.discountCodes.find((code) => !code.isUsed);
       if (availableCoupon) {
         setDiscountCode(availableCoupon.code);
+        hasAutoAppliedRef.current = true;
       }
     }
-  }, [stats, discountCode]);
+  }, [stats]);
 
   const checkoutMutation = useMutation({
     mutationFn: (data: CheckoutRequest) => apiClient.checkout(data),
@@ -118,10 +120,14 @@ export function CheckoutForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
       <div>
-        <label className="block text-sm font-medium mb-2">
+        <label
+          htmlFor="discount-code"
+          className="block text-sm font-medium mb-2"
+        >
           Discount Code (Optional)
         </label>
         <Input
+          id="discount-code"
           value={discountCode}
           onChange={(e) => setDiscountCode(e.target.value)}
           placeholder="Enter discount code"
