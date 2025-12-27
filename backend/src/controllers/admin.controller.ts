@@ -177,9 +177,7 @@ export async function adminRoutes(fastify: FastifyInstance) {
 
         const response: GenerateCouponResponse = {
           success: true,
-          message: `Reward coupon generated! This is order #${
-            currentOrderCount + 1
-          }, which is a multiple of N=${config.DISCOUNT_N}.`,
+          message: `🎁 Congratulations! You've unlocked a ${reward.discountPercent}% discount code!`,
           coupon: {
             code: reward.code,
             discountPercent: reward.discountPercent,

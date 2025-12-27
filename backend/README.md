@@ -273,7 +273,7 @@ Manually generate a discount coupon if the nth-order condition is met. Checks if
 ```json
 {
   "success": true,
-  "message": "Reward coupon generated! This is order #4, which is a multiple of N=4.",
+  "message": "🎁 Congratulations! You've unlocked a 10% discount code!",
   "coupon": {
     "code": "ABC123XY",
     "discountPercent": 10,
@@ -287,7 +287,7 @@ Manually generate a discount coupon if the nth-order condition is met. Checks if
 ```json
 {
   "success": false,
-  "message": "N-logic condition not met. Need 2 more order(s) before the next reward. Current order count: 2, N: 4"
+  "message": "Keep shopping! Complete 2 more orders to unlock your next reward."
 }
 ```
 

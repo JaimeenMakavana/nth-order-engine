@@ -74,7 +74,7 @@ class ApiClient {
     });
   }
 
-  // Admin
+  // Statistics & Coupons
   async getStats(): Promise<StatsResponse> {
     return this.request<StatsResponse>("/api/admin/stats");
   }

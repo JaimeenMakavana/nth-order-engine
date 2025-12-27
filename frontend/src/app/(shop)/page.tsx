@@ -5,6 +5,7 @@ import { useCartStore } from "@/store/use-cart-store";
 import { Button } from "@/components/ui/button";
 import { ShoppingCart } from "lucide-react";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { CartModal } from "@/components/features/cart/cart-modal";
 import { ProductCard } from "@/components/features/cart/product-card";
 import { ProductCardSkeleton } from "@/components/features/cart/product-card-skeleton";
@@ -13,12 +14,18 @@ export default function ShopPage() {
   const { data: products, isLoading } = useProducts();
   const addCartItemMutation = useAddCartItem();
   const [cartOpen, setCartOpen] = useState(false);
+  const router = useRouter();
   const itemCount = useCartStore((state) =>
     state.items.reduce((sum, item) => sum + item.quantity, 0)
   );
 
   const handleAddToCart = (productId: string) => {
     addCartItemMutation.mutate({ productId, quantity: 1 });
+  };
+
+  const handleCartClose = () => {
+    setCartOpen(false);
+    router.push("/checkout");
   };
 
   return (
@@ -60,7 +67,7 @@ export default function ShopPage() {
         </div>
       )}
 
-      <CartModal isOpen={cartOpen} onClose={() => setCartOpen(false)} />
+      <CartModal isOpen={cartOpen} onClose={handleCartClose} />
     </div>
   );
 }

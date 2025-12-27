@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useState, useEffect } from "react";
+import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { apiClient } from "@/lib/api-client";
 import { useCartStore } from "@/store/use-cart-store";
 import { useRewardReveal } from "@/hooks/use-reward-reveal";
@@ -20,10 +20,52 @@ export function CheckoutForm() {
   const [discountCode, setDiscountCode] = useState("");
   const setItems = useCartStore((state) => state.setItems);
 
+  // Fetch stats to get available coupons
+  const { data: stats } = useQuery({
+    queryKey: ["admin", "stats"],
+    queryFn: () => apiClient.getStats(),
+  });
+
+  // Auto-apply the first available (unused) coupon
+  useEffect(() => {
+    if (stats?.discountCodes && discountCode === "") {
+      const availableCoupon = stats.discountCodes.find((code) => !code.isUsed);
+      if (availableCoupon) {
+        setDiscountCode(availableCoupon.code);
+      }
+    }
+  }, [stats, discountCode]);
+
   const checkoutMutation = useMutation({
     mutationFn: (data: CheckoutRequest) => apiClient.checkout(data),
     onSuccess: async (data) => {
-      toast.success("Order placed successfully!");
+      // Build user-friendly success message
+      const orderAmount = `$${data.order.finalAmount.toFixed(2)}`;
+      const discountAmount =
+        data.order.discountApplied > 0
+          ? ` (Saved $${data.order.discountApplied.toFixed(2)})`
+          : "";
+
+      // Show primary success toast
+      toast.success(
+        <div className="space-y-1">
+          <div className="font-semibold">🎉 Order Confirmed!</div>
+          <div className="text-sm opacity-90">
+            Total: <span className="font-medium">{orderAmount}</span>
+            {discountAmount && (
+              <span className="text-primary-accent ml-1">{discountAmount}</span>
+            )}
+          </div>
+          {data.reward && (
+            <div className="text-sm text-premium-glow font-medium mt-1">
+              🎁 {data.reward.message}
+            </div>
+          )}
+        </div>,
+        {
+          duration: 5000,
+        }
+      );
 
       // Show reward if available
       if (data.reward) {
@@ -46,13 +88,16 @@ export function CheckoutForm() {
       // Invalidate coupon message query to refresh the reward status
       queryClient.invalidateQueries({ queryKey: couponKeys.message() });
 
+      // Invalidate admin and stats queries to refresh statistics
+      queryClient.invalidateQueries({ queryKey: ["admin"] });
+
       // Redirect to home
       setTimeout(() => {
         router.push("/");
       }, 2000);
     },
     onError: (error: Error) => {
-      toast.error(error.message || "Checkout failed");
+      toast.error(error.message || "Checkout failed. Please try again.");
     },
   });
 

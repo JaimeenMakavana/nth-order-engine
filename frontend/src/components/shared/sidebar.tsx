@@ -18,7 +18,7 @@ export function Sidebar() {
   const navItems = [
     { href: "/", label: "Shop", icon: Package },
     { href: "/checkout", label: "Checkout", icon: ShoppingCart },
-    { href: "/admin", label: "Admin", icon: Settings },
+    { href: "/stats", label: "Statistics", icon: Settings },
   ];
 
   return (

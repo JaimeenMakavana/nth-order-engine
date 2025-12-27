@@ -11,7 +11,7 @@ interface ExplorationStore extends ExplorationState {
 const ROUTES = [
   "/",
   "/checkout",
-  "/admin",
+  "/stats",
   // Add more routes as needed
 ];
 
@@ -23,10 +23,10 @@ export const useExplorationStore = create<ExplorationStore>((set, get) => ({
   visitRoute: (route: string) => {
     const state = get();
     const newVisitedRoutes = new Set(state.visitedRoutes);
-    
+
     if (!newVisitedRoutes.has(route)) {
       newVisitedRoutes.add(route);
-      
+
       const progress = Math.min(
         (newVisitedRoutes.size / ROUTES.length) * 100,
         100

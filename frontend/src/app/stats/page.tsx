@@ -4,10 +4,10 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiClient } from "@/lib/api-client";
 import { Button } from "@/components/ui/button";
 import { StatisticsShimmer } from "@/components/ui/shimmer";
-import { BarChart3, Gift, RefreshCw } from "lucide-react";
+import { BarChart3, Gift } from "lucide-react";
 import { toast } from "sonner";
 
-export default function AdminPage() {
+export default function StatsPage() {
   const queryClient = useQueryClient();
 
   const { data: stats, isLoading } = useQuery({
@@ -32,7 +32,7 @@ export default function AdminPage() {
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold flex items-center gap-2">
             <BarChart3 className="h-8 w-8" />
-            Admin Dashboard
+            Statistics
           </h1>
           <Button
             onClick={() => generateCouponMutation.mutate()}
@@ -130,3 +130,4 @@ export default function AdminPage() {
     </div>
   );
 }
+
