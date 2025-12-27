@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { QueryProvider } from "@/providers/query-provider";
 import { ThemeProvider } from "@/providers/theme-provider";
+import { SidebarProvider } from "@/providers/sidebar-provider";
 import { DecryptionBar } from "@/components/shared/decryption-bar";
 import { Sidebar } from "@/components/shared/sidebar";
 import { RewardReveal } from "@/components/features/rewards/reward-reveal";
@@ -40,12 +41,14 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <QueryProvider>
-            <DecryptionBar />
-            <div className="flex pt-12">
-              <Sidebar />
-              <main className="flex-1 ml-64">{children}</main>
-            </div>
-            <RewardReveal />
+            <SidebarProvider>
+              <DecryptionBar />
+              <div className="flex pt-14 sm:pt-16">
+                <Sidebar />
+                <main className="flex-1 lg:ml-64">{children}</main>
+              </div>
+              <RewardReveal />
+            </SidebarProvider>
             <Toaster
               position="top-center"
               theme="dark"

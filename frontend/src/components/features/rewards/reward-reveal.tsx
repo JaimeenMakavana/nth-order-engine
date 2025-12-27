@@ -43,7 +43,7 @@ export function RewardReveal() {
     <AnimatePresence>
       {isVisible && (
         <Dialog open={isVisible} onOpenChange={close}>
-          <DialogContent className={cn("border-2", config.borderColor)}>
+          <DialogContent className={cn("border-2 w-[95vw] sm:w-full max-w-md", config.borderColor)}>
             <motion.div
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
@@ -53,42 +53,42 @@ export function RewardReveal() {
               <DialogHeader>
                 <motion.div
                   className={cn(
-                    "flex items-center justify-center gap-2 mb-4",
+                    "flex items-center justify-center gap-2 mb-3 sm:mb-4",
                     config.color
                   )}
                   animate={{ rotate: [0, 10, -10, 0] }}
                   transition={{ duration: 0.5, repeat: 2 }}
                 >
-                    <Icon className="h-8 w-8" />
-                    <DialogTitle className={config.color}>
+                    <Icon className="h-6 w-6 sm:h-8 sm:w-8" />
+                    <DialogTitle className={cn("text-base sm:text-lg", config.color)}>
                       {config.label}
                     </DialogTitle>
                   </motion.div>
               </DialogHeader>
 
-              <div className={cn("p-6 rounded-lg text-center", config.bgColor)}>
+              <div className={cn("p-4 sm:p-6 rounded-lg text-center", config.bgColor)}>
                 <motion.div
                   initial={{ y: 20, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ delay: 0.2 }}
                 >
-                  <p className="text-2xl font-bold mb-2">{reward.message}</p>
-                  <p className="text-4xl font-bold mb-4">
+                  <p className="text-lg sm:text-2xl font-bold mb-2">{reward.message}</p>
+                  <p className="text-3xl sm:text-4xl font-bold mb-3 sm:mb-4">
                     {reward.discountPercent}% OFF
                   </p>
-                  <div className="bg-background-main p-4 rounded border border-borders">
-                    <p className="text-sm text-muted-foreground mb-2">
+                  <div className="bg-background-main p-3 sm:p-4 rounded border border-borders">
+                    <p className="text-xs sm:text-sm text-muted-foreground mb-2">
                       Your discount code:
                     </p>
-                    <p className="text-xl font-mono font-bold text-primary-accent">
+                    <p className="text-base sm:text-xl font-mono font-bold text-primary-accent break-all">
                       {reward.code}
                     </p>
                   </div>
                 </motion.div>
               </div>
 
-              <div className="mt-4">
-                <Button onClick={close} className="w-full">
+              <div className="mt-3 sm:mt-4">
+                <Button onClick={close} className="w-full text-sm sm:text-base">
                   Claim Reward
                 </Button>
               </div>

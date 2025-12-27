@@ -199,5 +199,6 @@ src/
 - for example : dribble , and ui ideas
 - i have finalise the bento grid layout , it gives modern minimalist feeling and i like that.
 4. code implementation
-
+- implemented the core functionality
+- then starts the fine tuning each component
 5. test cases

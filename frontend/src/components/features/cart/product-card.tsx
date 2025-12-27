@@ -28,34 +28,34 @@ export function ProductCard({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.1 }}
-      className="border border-borders rounded-lg p-6 bg-grid-surface hover:border-primary-accent/50 transition-colors flex flex-col"
+      className="border border-borders rounded-lg p-4 sm:p-6 bg-grid-surface hover:border-primary-accent/50 transition-colors flex flex-col"
     >
       {/* Product Image */}
-      <div className="relative w-full h-48 mb-4 rounded-md overflow-hidden bg-background-main">
+      <div className="relative w-full h-40 sm:h-48 mb-3 sm:mb-4 rounded-md overflow-hidden bg-background-main">
         <Image
           src={PLACEHOLDER_IMAGE}
           alt={product.name}
           fill
           className="object-cover"
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+          sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
         />
       </div>
 
       {/* Product Info */}
-      <div className="flex-1 mb-4">
-        <h3 className="text-lg font-semibold mb-2">{product.name}</h3>
-        <p className="text-2xl font-bold text-primary-accent">
+      <div className="flex-1 mb-3 sm:mb-4">
+        <h3 className="text-base sm:text-lg font-semibold mb-2">{product.name}</h3>
+        <p className="text-xl sm:text-2xl font-bold text-primary-accent">
           ${product.price.toFixed(2)}
         </p>
       </div>
 
       {/* Add to Cart Button */}
       <Button
-        className="w-full"
+        className="w-full text-sm sm:text-base"
         onClick={() => onAddToCart(product.id)}
         disabled={isAdding}
       >
-        <Plus className="h-4 w-4 mr-2" />
+        <Plus className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
         {isAdding ? "Adding..." : "Add to Cart"}
       </Button>
     </motion.div>

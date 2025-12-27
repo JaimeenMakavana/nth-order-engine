@@ -27,16 +27,17 @@ export default function StatsPage() {
   });
 
   return (
-    <div className="min-h-screen p-8">
+    <div className="min-h-screen p-4 sm:p-6 lg:p-8">
       <div className="max-w-6xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold flex items-center gap-2">
-            <BarChart3 className="h-8 w-8" />
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold flex items-center gap-2">
+            <BarChart3 className="h-6 w-6 sm:h-8 sm:w-8" />
             Statistics
           </h1>
           <Button
             onClick={() => generateCouponMutation.mutate()}
             disabled={generateCouponMutation.isPending}
+            className="w-full sm:w-auto"
           >
             <Gift className="h-4 w-4 mr-2" />
             {generateCouponMutation.isPending
@@ -48,36 +49,38 @@ export default function StatsPage() {
         {isLoading ? (
           <StatisticsShimmer />
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div className="border border-borders rounded-lg p-6 bg-grid-surface">
-              <h3 className="text-sm text-muted-foreground mb-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
+            <div className="border border-borders rounded-lg p-4 sm:p-6 bg-grid-surface">
+              <h3 className="text-xs sm:text-sm text-muted-foreground mb-2">
                 Total Items Purchased
               </h3>
-              <p className="text-3xl font-bold text-primary-accent">
+              <p className="text-2xl sm:text-3xl font-bold text-primary-accent">
                 {stats?.totalItemsPurchased || 0}
               </p>
             </div>
-            <div className="border border-borders rounded-lg p-6 bg-grid-surface">
-              <h3 className="text-sm text-muted-foreground mb-2">
+            <div className="border border-borders rounded-lg p-4 sm:p-6 bg-grid-surface">
+              <h3 className="text-xs sm:text-sm text-muted-foreground mb-2">
                 Total Purchase Amount
               </h3>
-              <p className="text-3xl font-bold text-secondary-accent">
+              <p className="text-2xl sm:text-3xl font-bold text-secondary-accent">
                 ${(stats?.totalPurchaseAmount || 0).toFixed(2)}
               </p>
             </div>
-            <div className="border border-borders rounded-lg p-6 bg-grid-surface">
-              <h3 className="text-sm text-muted-foreground mb-2">
+            <div className="border border-borders rounded-lg p-4 sm:p-6 bg-grid-surface sm:col-span-2 md:col-span-1">
+              <h3 className="text-xs sm:text-sm text-muted-foreground mb-2">
                 Total Discount Given
               </h3>
-              <p className="text-3xl font-bold text-premium-glow">
+              <p className="text-2xl sm:text-3xl font-bold text-premium-glow">
                 ${(stats?.totalDiscountAmount || 0).toFixed(2)}
               </p>
             </div>
           </div>
         )}
 
-        <div className="border border-borders rounded-lg p-6 bg-grid-surface">
-          <h2 className="text-lg font-semibold mb-4">Discount Codes</h2>
+        <div className="border border-borders rounded-lg p-4 sm:p-6 bg-grid-surface">
+          <h2 className="text-base sm:text-lg font-semibold mb-4">
+            Discount Codes
+          </h2>
           {isLoading ? (
             <div className="text-center py-8 text-muted-foreground">
               Loading...
@@ -91,13 +94,13 @@ export default function StatsPage() {
               {stats?.discountCodes.map((code, index) => (
                 <div
                   key={index}
-                  className="flex items-center justify-between p-4 border border-borders rounded-md"
+                  className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-3 sm:p-4 border border-borders rounded-md"
                 >
-                  <div className="flex items-center gap-4">
-                    <code className="font-mono text-primary-accent">
+                  <div className="flex flex-wrap items-center gap-2 sm:gap-4">
+                    <code className="font-mono text-xs sm:text-sm text-primary-accent break-all">
                       {code.code}
                     </code>
-                    <span className="text-sm text-muted-foreground">
+                    <span className="text-xs sm:text-sm text-muted-foreground">
                       {code.discountPercent}% off
                     </span>
                     <span
@@ -130,4 +133,3 @@ export default function StatsPage() {
     </div>
   );
 }
-

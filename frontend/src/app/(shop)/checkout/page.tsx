@@ -31,32 +31,38 @@ export default function CheckoutPage() {
   );
 
   return (
-    <div className="min-h-screen p-8">
+    <div className="min-h-screen p-4 sm:p-6 lg:p-8">
       <div className="max-w-2xl mx-auto">
-        <h1 className="text-3xl font-bold mb-8">Checkout</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8">
+          Checkout
+        </h1>
 
         {items.length === 0 ? (
-          <div className="text-center py-12 border border-borders rounded-lg bg-grid-surface">
-            <ShoppingBag className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
+          <div className="text-center py-8 sm:py-12 border border-borders rounded-lg bg-grid-surface">
+            <ShoppingBag className="h-10 w-10 sm:h-12 sm:w-12 mx-auto mb-4 text-muted-foreground" />
             <p className="text-muted-foreground">Your cart is empty</p>
           </div>
         ) : (
-          <div className="space-y-6">
-            <div className="border border-borders rounded-lg p-6 bg-grid-surface">
-              <h2 className="text-lg font-semibold mb-4">Order Summary</h2>
+          <div className="space-y-4 sm:space-y-6">
+            <div className="border border-borders rounded-lg p-4 sm:p-6 bg-grid-surface">
+              <h2 className="text-base sm:text-lg font-semibold mb-4">
+                Order Summary
+              </h2>
               <div className="space-y-3">
                 {cartItems.map((item) => (
                   <div
                     key={item.productId}
-                    className="flex justify-between items-center py-2 border-b border-borders last:border-0"
+                    className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-0 py-2 border-b border-borders last:border-0"
                   >
-                    <div>
-                      <p className="font-medium">{item.product?.name}</p>
-                      <p className="text-sm text-muted-foreground">
+                    <div className="flex-1">
+                      <p className="font-medium text-sm sm:text-base">
+                        {item.product?.name}
+                      </p>
+                      <p className="text-xs sm:text-sm text-muted-foreground">
                         {item.quantity} × ${item.product?.price.toFixed(2)}
                       </p>
                     </div>
-                    <p className="font-semibold">
+                    <p className="font-semibold text-sm sm:text-base">
                       ${((item.product?.price || 0) * item.quantity).toFixed(2)}
                     </p>
                   </div>
@@ -64,16 +70,20 @@ export default function CheckoutPage() {
               </div>
               <div className="mt-4 pt-4 border-t border-borders">
                 <div className="flex justify-between items-center">
-                  <span className="text-lg font-semibold">Total</span>
-                  <span className="text-2xl font-bold text-primary-accent">
+                  <span className="text-base sm:text-lg font-semibold">
+                    Total
+                  </span>
+                  <span className="text-xl sm:text-2xl font-bold text-primary-accent">
                     ${subtotal.toFixed(2)}
                   </span>
                 </div>
               </div>
             </div>
 
-            <div className="border border-borders rounded-lg p-6 bg-grid-surface">
-              <h2 className="text-lg font-semibold mb-4">Payment Details</h2>
+            <div className="border border-borders rounded-lg p-4 sm:p-6 bg-grid-surface">
+              <h2 className="text-base sm:text-lg font-semibold mb-4">
+                Payment Details
+              </h2>
               <CheckoutForm />
             </div>
           </div>

@@ -116,7 +116,7 @@ export function CheckoutForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
       <div>
         <label className="block text-sm font-medium mb-2">
           Discount Code (Optional)
@@ -125,13 +125,18 @@ export function CheckoutForm() {
           value={discountCode}
           onChange={(e) => setDiscountCode(e.target.value)}
           placeholder="Enter discount code"
+          className="w-full"
         />
       </div>
 
       <div className="border-t border-borders pt-4">
         <div className="flex justify-between items-center mb-4">
-          <span className="text-sm text-muted-foreground">Items in cart:</span>
-          <span className="font-semibold">{items.length}</span>
+          <span className="text-xs sm:text-sm text-muted-foreground">
+            Items in cart:
+          </span>
+          <span className="font-semibold text-sm sm:text-base">
+            {items.length}
+          </span>
         </div>
       </div>
 
