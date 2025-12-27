@@ -65,7 +65,7 @@ export async function adminRoutes(fastify: FastifyInstance) {
     async (request: FastifyRequest, reply: FastifyReply) => {
       try {
         const orders = store.getOrders();
-        
+
         // Calculate total items purchased (sum of all quantities)
         let totalItemsPurchased = 0;
         for (const order of orders) {
@@ -151,12 +151,15 @@ export async function adminRoutes(fastify: FastifyInstance) {
         if (!isNthOrder) {
           const nextNthOrder =
             Math.ceil((currentOrderCount + 1) / config.DISCOUNT_N) *
-              config.DISCOUNT_N;
+            config.DISCOUNT_N;
           const ordersNeeded = nextNthOrder - currentOrderCount;
 
           return reply.status(200).send({
             success: false,
-            message: `N-logic condition not met. Need ${ordersNeeded} more order(s) before the next reward. Current order count: ${currentOrderCount}, N: ${config.DISCOUNT_N}`,
+            message:
+              ordersNeeded === 1
+                ? `You're almost there! Complete 1 more order to unlock your next reward.`
+                : `Keep shopping! Complete ${ordersNeeded} more orders to unlock your next reward.`,
           });
         }
 
@@ -174,7 +177,9 @@ export async function adminRoutes(fastify: FastifyInstance) {
 
         const response: GenerateCouponResponse = {
           success: true,
-          message: `Reward coupon generated! This is order #${currentOrderCount + 1}, which is a multiple of N=${config.DISCOUNT_N}.`,
+          message: `Reward coupon generated! This is order #${
+            currentOrderCount + 1
+          }, which is a multiple of N=${config.DISCOUNT_N}.`,
           coupon: {
             code: reward.code,
             discountPercent: reward.discountPercent,
@@ -193,4 +198,3 @@ export async function adminRoutes(fastify: FastifyInstance) {
     }
   );
 }
-
