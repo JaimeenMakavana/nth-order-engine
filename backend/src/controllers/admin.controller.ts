@@ -104,7 +104,9 @@ export async function adminRoutes(fastify: FastifyInstance) {
 
         return reply.status(200).send(response);
       } catch (error: any) {
-        request.log.error(error);
+        if (request.log) {
+          request.log.error(error);
+        }
         return reply.status(500).send({
           error: "Internal Server Error",
           message: "Failed to retrieve statistics",

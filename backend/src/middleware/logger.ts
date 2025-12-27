@@ -8,6 +8,11 @@ export async function logger(
   request: FastifyRequest,
   reply: FastifyReply
 ): Promise<void> {
+  // Only log if logger is enabled
+  if (!request.log) {
+    return;
+  }
+
   const startTime = Date.now();
 
   // Log request details
@@ -20,6 +25,7 @@ export async function logger(
 
   // Log response time after request completes
   reply.addHook("onSend", async (request, reply) => {
+    if (!request.log) return;
     const duration = Date.now() - startTime;
     request.log.info({
       method: request.method,

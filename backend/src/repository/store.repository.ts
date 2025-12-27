@@ -100,6 +100,15 @@ class StoreRepository {
   public getProductById(id: string): Product | undefined {
     return this.products.find((product) => product.id === id);
   }
+
+  /**
+   * Reset all data (primarily for testing)
+   */
+  public reset(): void {
+    this.orders = [];
+    this.products = [];
+    this.coupons = [];
+  }
 }
 
 // Export as a single instance

@@ -8,16 +8,25 @@ import { adminRoutes } from "./controllers/admin.controller.js";
 /**
  * Bootstrap the Fastify server
  */
-async function buildApp() {
+async function buildApp(options?: { logger?: boolean }) {
   const app = Fastify({
-    logger: true, // Enable Fastify's built-in logger
+    logger: options?.logger ?? true, // Enable Fastify's built-in logger by default
+  });
+
+  // Set schema error formatter to return 400 for validation errors
+  app.setSchemaErrorFormatter((errors, dataVar) => {
+    return new Error(
+      `Validation error: ${errors.map((e) => e.message).join(", ")}`
+    ) as any;
   });
 
   // Register global error handler
   app.setErrorHandler(errorHandler);
 
-  // Register request logger middleware
-  app.addHook("onRequest", logger);
+  // Register request logger middleware (only if logger is enabled)
+  if (options?.logger !== false) {
+    app.addHook("onRequest", logger);
+  }
 
   // Health check endpoint
   app.get("/health", async (request, reply) => {

@@ -148,7 +148,7 @@ export async function checkoutRoutes(fastify: FastifyInstance) {
           });
         }
 
-        // Handle business logic errors
+        // Handle business logic errors (like invalid product, invalid coupon)
         if (error.message) {
           return reply.status(400).send({
             error: "Checkout Error",
@@ -157,7 +157,9 @@ export async function checkoutRoutes(fastify: FastifyInstance) {
         }
 
         // Handle unexpected errors
-        request.log.error(error);
+        if (request.log) {
+          request.log.error(error);
+        }
         return reply.status(500).send({
           error: "Internal Server Error",
           message: "An unexpected error occurred during checkout",

@@ -9,15 +9,25 @@ export async function errorHandler(
   request: FastifyRequest,
   reply: FastifyReply
 ) {
-  // Log the error
-  request.log.error(error);
+  // Log the error if logger is available
+  if (request.log) {
+    request.log.error(error);
+  }
 
-  // Handle validation errors (400)
+  // Handle validation errors (400) - from Fastify schema validation
   if (error.validation) {
     return reply.status(400).send({
       error: "Validation Error",
       message: error.message,
       details: error.validation,
+    });
+  }
+
+  // Handle status code errors (like 400 from business logic)
+  if (error.statusCode && error.statusCode >= 400 && error.statusCode < 500) {
+    return reply.status(error.statusCode).send({
+      error: error.name || "Client Error",
+      message: error.message || "A client error occurred",
     });
   }
 
