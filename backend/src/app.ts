@@ -3,6 +3,7 @@ import { config } from "./config.js";
 import { errorHandler } from "./middleware/error.handler.js";
 import { logger } from "./middleware/logger.js";
 import { checkoutRoutes } from "./controllers/checkout.controller.js";
+import { adminRoutes } from "./controllers/admin.controller.js";
 
 /**
  * Bootstrap the Fastify server
@@ -25,9 +26,9 @@ async function buildApp() {
 
   // Register routes
   await app.register(checkoutRoutes);
+  await app.register(adminRoutes);
   // TODO: Register other routes
   // app.register(cartRoutes);
-  // app.register(adminRoutes);
 
   return app;
 }

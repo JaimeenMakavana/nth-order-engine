@@ -51,6 +51,13 @@ class StoreRepository {
   }
 
   /**
+   * Get all coupons
+   */
+  public getAllCoupons(): Coupon[] {
+    return [...this.coupons]; // Return a copy to prevent external mutation
+  }
+
+  /**
    * Get a valid (unused) coupon by code
    * Returns undefined if coupon doesn't exist or is already used
    */
