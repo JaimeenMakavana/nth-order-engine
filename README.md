@@ -109,3 +109,16 @@ src/
 └── __tests__/              # Proof of Quality
     ├── nth-logic.test.ts     # Specifically tests if N=4 triggers a reward
     └── probability.test.ts   # Verifies the 80/15/5 distribution split
+
+
+---
+
+## 4. code implementation
+
+- once the folder structure created and logic what i want for this backend, i have explain to gemini, based on that I generated prompt for each of the functionality.
+- so my thought process build while working with cursor, antigravity and other ai coding tools is that so they are like jr developer with vast knowledge of the coding, so i provide proper roadmap, then i just have to look the code it generate and add patches where it distracted from the expected roadmap.
+- so I have gave core logic for backend, like checkout, discount , cart etc + most importantly full folder structure , it cursor generated the 80% code based on the requirement.
+- othr 20%, i got it through the iterations. 
+
+
+=> so apart from requirement mention in doc, i have found out that there is requirement of integration testing for coupen double spend , so i need to ensure that once a coupon is used in a successful checkout, it cannot be reused for a subsequent order. so I have implement this test.
