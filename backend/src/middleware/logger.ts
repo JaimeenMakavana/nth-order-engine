@@ -6,14 +6,15 @@ import type { FastifyRequest, FastifyReply } from "fastify";
  */
 export async function logger(
   request: FastifyRequest,
-  reply: FastifyReply
+  _reply: FastifyReply
 ): Promise<void> {
   // Only log if logger is enabled
   if (!request.log) {
     return;
   }
 
-  const startTime = Date.now();
+  // Store start time in request object for response logging
+  (request as any).startTime = Date.now();
 
   // Log request details
   request.log.info({
@@ -22,17 +23,26 @@ export async function logger(
     ip: request.ip,
     userAgent: request.headers["user-agent"],
   });
-
-  // Log response time after request completes
-  reply.addHook("onSend", async (request, reply) => {
-    if (!request.log) return;
-    const duration = Date.now() - startTime;
-    request.log.info({
-      method: request.method,
-      url: request.url,
-      statusCode: reply.statusCode,
-      duration: `${duration}ms`,
-    });
-  });
 }
 
+/**
+ * Response logger hook
+ * Logs response time after request completes
+ */
+export async function responseLogger(
+  request: FastifyRequest,
+  reply: FastifyReply
+): Promise<void> {
+  if (!request.log) return;
+
+  const startTime = (request as any).startTime;
+  if (!startTime) return;
+
+  const duration = Date.now() - startTime;
+  request.log.info({
+    method: request.method,
+    url: request.url,
+    statusCode: reply.statusCode,
+    duration: `${duration}ms`,
+  });
+}

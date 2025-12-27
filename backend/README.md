@@ -69,7 +69,227 @@ src/
 
 ## API Endpoints
 
-- `GET /health` - Health check endpoint
+### Health Check
+
+**GET** `/health`
+
+Health check endpoint to verify server is running.
+
+**Response:**
+
+```json
+{
+  "status": "ok",
+  "timestamp": "2024-01-01T00:00:00.000Z"
+}
+```
+
+---
+
+### Products
+
+**GET** `/api/products`
+
+List all available products in the store.
+
+**Response:**
+
+```json
+{
+  "products": [
+    {
+      "id": "prod-1",
+      "name": "Wireless Mouse",
+      "price": 29.99
+    }
+  ]
+}
+```
+
+**Note:** Products are automatically seeded on server startup with 8 sample products.
+
+---
+
+### Cart
+
+**GET** `/api/cart`
+
+Get current cart items and subtotal.
+
+**Response:**
+
+```json
+{
+  "items": [
+    {
+      "productId": "prod-1",
+      "quantity": 2
+    }
+  ],
+  "subtotal": 59.98
+}
+```
+
+**POST** `/api/cart/items`
+
+Add item to cart. If item already exists, quantity is incremented.
+
+**Request Body:**
+
+```json
+{
+  "productId": "prod-1",
+  "quantity": 1
+}
+```
+
+**Response:**
+
+```json
+{
+  "items": [
+    {
+      "productId": "prod-1",
+      "quantity": 1
+    }
+  ],
+  "subtotal": 29.99
+}
+```
+
+**DELETE** `/api/cart`
+
+Clear all items from the cart.
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "message": "Cart cleared successfully"
+}
+```
+
+---
+
+### Checkout
+
+**POST** `/api/checkout`
+
+Process checkout with cart items and optional discount code. Validates discount code before applying. Every nth order (configurable via `DISCOUNT_N`) automatically generates a reward coupon.
+
+**Request Body:**
+
+```json
+{
+  "items": [
+    {
+      "productId": "prod-1",
+      "quantity": 2
+    }
+  ],
+  "discountCode": "SAVE10" // Optional
+}
+```
+
+**Response (with reward):**
+
+```json
+{
+  "success": true,
+  "order": {
+    "id": "uuid-here",
+    "items": [
+      {
+        "productId": "prod-1",
+        "quantity": 2
+      }
+    ],
+    "totalAmount": 59.98,
+    "discountApplied": 5.998,
+    "finalAmount": 53.982,
+    "timestamp": "2024-01-01T00:00:00.000Z"
+  },
+  "reward": {
+    "code": "ABC123XY",
+    "discountPercent": 10,
+    "tier": "COMMON",
+    "message": "Standard Reward Unlocked!"
+  }
+}
+```
+
+**Error Responses:**
+
+- `400` - Invalid discount code or already used
+- `400` - Product not found
+- `400` - Validation error
+
+**Note:**
+
+- Discount codes can only be used once
+- Discount applies to the entire order
+- Reward coupons are generated on every nth order (default: 4th, 8th, 12th, etc.)
+- Reward tiers: COMMON (10%), RARE (15%), LEGENDARY (25%)
+
+---
+
+### Admin
+
+**GET** `/api/admin/stats`
+
+Get comprehensive statistics about purchases and discounts.
+
+**Response:**
+
+```json
+{
+  "totalItemsPurchased": 25,
+  "totalPurchaseAmount": 1250.5,
+  "totalDiscountAmount": 125.05,
+  "discountCodes": [
+    {
+      "code": "ABC123XY",
+      "discountPercent": 10,
+      "tier": "COMMON",
+      "isUsed": false
+    },
+    {
+      "code": "XYZ789AB",
+      "discountPercent": 15,
+      "tier": "RARE",
+      "isUsed": true
+    }
+  ]
+}
+```
+
+**POST** `/api/admin/generate-coupon`
+
+Manually generate a discount coupon if the nth-order condition is met. Checks if `(current_order_count + 1) % DISCOUNT_N === 0`.
+
+**Response (success):**
+
+```json
+{
+  "success": true,
+  "message": "Reward coupon generated! This is order #4, which is a multiple of N=4.",
+  "coupon": {
+    "code": "ABC123XY",
+    "discountPercent": 10,
+    "tier": "COMMON"
+  }
+}
+```
+
+**Response (condition not met):**
+
+```json
+{
+  "success": false,
+  "message": "N-logic condition not met. Need 2 more order(s) before the next reward. Current order count: 2, N: 4"
+}
+```
 
 ## Configuration
 

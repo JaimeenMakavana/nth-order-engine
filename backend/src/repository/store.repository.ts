@@ -1,4 +1,4 @@
-import type { Order, Product, Coupon } from "../types/index.js";
+import type { Order, Product, Coupon, CartItem } from "../types/index.js";
 
 /**
  * Thread-safe Singleton Repository for In-Memory Data Storage
@@ -10,6 +10,7 @@ class StoreRepository {
   private orders: Order[] = [];
   private products: Product[] = [];
   private coupons: Coupon[] = [];
+  private cart: CartItem[] = [];
 
   /**
    * Private constructor to prevent direct instantiation
@@ -102,12 +103,39 @@ class StoreRepository {
   }
 
   /**
+   * Get cart items
+   */
+  public getCart(): CartItem[] {
+    return [...this.cart]; // Return a copy to prevent external mutation
+  }
+
+  /**
+   * Add item to cart or update quantity if item already exists
+   */
+  public addToCart(productId: string, quantity: number): void {
+    const existingItem = this.cart.find((item) => item.productId === productId);
+    if (existingItem) {
+      existingItem.quantity += quantity;
+    } else {
+      this.cart.push({ productId, quantity });
+    }
+  }
+
+  /**
+   * Clear the cart
+   */
+  public clearCart(): void {
+    this.cart = [];
+  }
+
+  /**
    * Reset all data (primarily for testing)
    */
   public reset(): void {
     this.orders = [];
     this.products = [];
     this.coupons = [];
+    this.cart = [];
   }
 }
 

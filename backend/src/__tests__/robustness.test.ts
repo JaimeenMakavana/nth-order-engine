@@ -94,7 +94,7 @@ describe("Robustness Tests", () => {
 
   describe("Input Integrity", () => {
     it("should return 400 error when given an empty cart", async () => {
-      const app = await buildApp({ logger: false });
+      const app = await buildApp({ logger: false, seedProducts: false });
 
       const response = await app.inject({
         method: "POST",
@@ -107,12 +107,12 @@ describe("Robustness Tests", () => {
       expect(response.statusCode).toBe(400);
       const body = JSON.parse(response.body);
       expect(body.error || body.message).toBeDefined();
-      
+
       await app.close();
     });
 
     it("should return 400 error when cart items array is missing", async () => {
-      const app = await buildApp({ logger: false });
+      const app = await buildApp({ logger: false, seedProducts: false });
 
       const response = await app.inject({
         method: "POST",
@@ -121,12 +121,12 @@ describe("Robustness Tests", () => {
       });
 
       expect(response.statusCode).toBe(400);
-      
+
       await app.close();
     });
 
     it("should return 400 error when given invalid product IDs", async () => {
-      const app = await buildApp({ logger: false });
+      const app = await buildApp({ logger: false, seedProducts: false });
 
       // Add a valid product
       const validProduct: Product = {
@@ -141,9 +141,7 @@ describe("Robustness Tests", () => {
         method: "POST",
         url: "/api/checkout",
         payload: {
-          items: [
-            { productId: "invalid-prod-id", quantity: 1 },
-          ],
+          items: [{ productId: "invalid-prod-id", quantity: 1 }],
         },
       });
 
@@ -153,12 +151,12 @@ describe("Robustness Tests", () => {
       if (body.message) {
         expect(body.message).toContain("not found");
       }
-      
+
       await app.close();
     });
 
     it("should return 400 error when quantity is invalid (zero or negative)", async () => {
-      const app = await buildApp({ logger: false });
+      const app = await buildApp({ logger: false, seedProducts: false });
 
       const product: Product = {
         id: "prod-1",
@@ -186,12 +184,12 @@ describe("Robustness Tests", () => {
         },
       });
       expect(responseNegative.statusCode).toBe(400);
-      
+
       await app.close();
     });
 
     it("should return 400 error when productId is missing", async () => {
-      const app = await buildApp({ logger: false });
+      const app = await buildApp({ logger: false, seedProducts: false });
 
       const response = await app.inject({
         method: "POST",
@@ -202,7 +200,7 @@ describe("Robustness Tests", () => {
       });
 
       expect(response.statusCode).toBe(400);
-      
+
       await app.close();
     });
   });
@@ -219,9 +217,24 @@ describe("Robustness Tests", () => {
 
       // Create coupons with different discount percentages
       const coupons = [
-        { code: "COUPON10", discountPercent: 10, isUsed: false, tier: "COMMON" as const },
-        { code: "COUPON15", discountPercent: 15, isUsed: false, tier: "RARE" as const },
-        { code: "COUPON20", discountPercent: 20, isUsed: false, tier: "LEGENDARY" as const },
+        {
+          code: "COUPON10",
+          discountPercent: 10,
+          isUsed: false,
+          tier: "COMMON" as const,
+        },
+        {
+          code: "COUPON15",
+          discountPercent: 15,
+          isUsed: false,
+          tier: "RARE" as const,
+        },
+        {
+          code: "COUPON20",
+          discountPercent: 20,
+          isUsed: false,
+          tier: "LEGENDARY" as const,
+        },
       ];
       coupons.forEach((c) => store.addCoupon(c));
 
@@ -262,7 +275,7 @@ describe("Robustness Tests", () => {
       }
 
       // Get admin stats
-      const app = await buildApp({ logger: false });
+      const app = await buildApp({ logger: false, seedProducts: false });
       const response = await app.inject({
         method: "GET",
         url: "/api/admin/stats",
@@ -290,7 +303,7 @@ describe("Robustness Tests", () => {
 
       expect(stats.totalPurchaseAmount).toBe(calculatedTotalPurchase);
       expect(stats.totalDiscountAmount).toBe(calculatedTotalDiscount);
-      
+
       await app.close();
     });
 
@@ -315,7 +328,7 @@ describe("Robustness Tests", () => {
       ]);
 
       // Get stats
-      const app = await buildApp({ logger: false });
+      const app = await buildApp({ logger: false, seedProducts: false });
       const response = await app.inject({
         method: "GET",
         url: "/api/admin/stats",
@@ -325,7 +338,7 @@ describe("Robustness Tests", () => {
 
       // Assert: Total items should be 2 + 5 + 3 = 10
       expect(stats.totalItemsPurchased).toBe(10);
-      
+
       await app.close();
     });
   });
@@ -353,9 +366,21 @@ describe("Robustness Tests", () => {
       // Log the distribution
       console.log("\n=== Probability Distribution Audit ===");
       console.log(`Total iterations: ${iterations}`);
-      console.log(`COMMON:   ${tierCounts.COMMON} (${commonPercent.toFixed(2)}%) - Expected: 90%`);
-      console.log(`RARE:     ${tierCounts.RARE} (${rarePercent.toFixed(2)}%) - Expected: 8%`);
-      console.log(`LEGENDARY: ${tierCounts.LEGENDARY} (${legendaryPercent.toFixed(2)}%) - Expected: 2%`);
+      console.log(
+        `COMMON:   ${tierCounts.COMMON} (${commonPercent.toFixed(
+          2
+        )}%) - Expected: 90%`
+      );
+      console.log(
+        `RARE:     ${tierCounts.RARE} (${rarePercent.toFixed(
+          2
+        )}%) - Expected: 8%`
+      );
+      console.log(
+        `LEGENDARY: ${tierCounts.LEGENDARY} (${legendaryPercent.toFixed(
+          2
+        )}%) - Expected: 2%`
+      );
       console.log("========================================\n");
 
       // Assert: Verify distribution is within acceptable tolerance
@@ -372,10 +397,13 @@ describe("Robustness Tests", () => {
       expect(legendaryPercent).toBeLessThanOrEqual(5);
 
       // Verify all rewards sum to 100%
-      expect(
-        tierCounts.COMMON + tierCounts.RARE + tierCounts.LEGENDARY
-      ).toBe(iterations);
-      expect(commonPercent + rarePercent + legendaryPercent).toBeCloseTo(100, 1);
+      expect(tierCounts.COMMON + tierCounts.RARE + tierCounts.LEGENDARY).toBe(
+        iterations
+      );
+      expect(commonPercent + rarePercent + legendaryPercent).toBeCloseTo(
+        100,
+        1
+      );
     });
 
     it("should maintain consistent distribution across multiple runs", () => {
@@ -418,7 +446,9 @@ describe("Robustness Tests", () => {
       console.log(`Runs: ${runs}, Iterations per run: ${iterations}`);
       console.log(`Average COMMON:   ${avgCommon.toFixed(2)}% (Expected: 90%)`);
       console.log(`Average RARE:     ${avgRare.toFixed(2)}% (Expected: 8%)`);
-      console.log(`Average LEGENDARY: ${avgLegendary.toFixed(2)}% (Expected: 2%)`);
+      console.log(
+        `Average LEGENDARY: ${avgLegendary.toFixed(2)}% (Expected: 2%)`
+      );
       console.log("==========================================\n");
 
       // Assert: Average should be close to expected values
@@ -431,4 +461,3 @@ describe("Robustness Tests", () => {
     });
   });
 });
-

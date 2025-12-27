@@ -129,7 +129,14 @@ export async function adminRoutes(fastify: FastifyInstance) {
             properties: {
               success: { type: "boolean" },
               message: { type: "string" },
-              coupon: { type: "object" },
+              coupon: {
+                type: "object",
+                properties: {
+                  code: { type: "string" },
+                  discountPercent: { type: "number" },
+                  tier: { type: "string" },
+                },
+              },
             },
           },
         },
