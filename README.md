@@ -70,46 +70,45 @@ In this model, the action is predictable (every 4th order), but the outcome is a
 
 ### Why 10%, 15%, 20%?
 
-The assignment asks for a "10% discount." By setting 10% as  base reward (the most common drop), I am following the rules while adding "Surprise and Delight" for the rare 15% or 25% drops.
+The assignment asks for a "10% discount." By setting 10% as base reward (the most common drop), I am following the rules while adding "Surprise and Delight" for the rare 15% or 25% drops.
 
 ---
 
-## 3. backend architecture deciding 
+## 3. backend architecture deciding
 
-so for backend, i decided the best practices used in deciding folder structure for fastify 
+so for backend, i decided the best practices used in deciding folder structure for fastify
 
 src/
-├── app.ts                  # Bootstraps the server (Fastify) & connects middleware
-├── config.ts               # Environment variables (N=4, port, etc.)
+├── app.ts # Bootstraps the server (Fastify) & connects middleware
+├── config.ts # Environment variables (N=4, port, etc.)
 │
-├── controllers/            # Entry points: Extracts data from Request -> Service
-│   ├── cart.controller.ts     # Handles adding/removing items
-│   ├── checkout.controller.ts # Handles order placement & reward triggers
-│   └── admin.controller.ts   # Handles stats & manual coupon generation
+├── controllers/ # Entry points: Extracts data from Request -> Service
+│ ├── cart.controller.ts # Handles adding/removing items
+│ ├── checkout.controller.ts # Handles order placement & reward triggers
+│ └── admin.controller.ts # Handles stats & manual coupon generation
 │
-├── services/               # The "Brain": Business logic & N-logic calculations
-│   ├── cart.service.ts       # Logic for totals and item management
-│   ├── checkout.service.ts   # Coordinates order saving and reward eligibility
-│   └── reward.service.ts     # EXCLUSIVE: Weighted random logic for variable discount
+├── services/ # The "Brain": Business logic & N-logic calculations
+│ ├── cart.service.ts # Logic for totals and item management
+│ ├── checkout.service.ts # Coordinates order saving and reward eligibility
+│ └── reward.service.ts # EXCLUSIVE: Weighted random logic for variable discount
 │
-├── repository/             # The "Memory": Direct interaction with In-Memory store
-│   └── store.repository.ts   # Singleton class holding Orders[], Cart[], Coupons[]
+├── repository/ # The "Memory": Direct interaction with In-Memory store
+│ └── store.repository.ts # Singleton class holding Orders[], Cart[], Coupons[]
 │
-├── schemas/                # The "Guard": Data validation using Zod
-│   ├── checkout.schema.ts    # Validates correct coupon and user data format
-│   └── product.schema.ts     # Validates item structure
+├── schemas/ # The "Guard": Data validation using Zod
+│ ├── checkout.schema.ts # Validates correct coupon and user data format
+│ └── product.schema.ts # Validates item structure
 │
-├── middleware/             # Interceptors
-│   ├── error.handler.ts      # Global catch for 400/500 errors
-│   └── logger.ts             # Logs API requests (important for evaluation)
+├── middleware/ # Interceptors
+│ ├── error.handler.ts # Global catch for 400/500 errors
+│ └── logger.ts # Logs API requests (important for evaluation)
 │
-├── types/                  # Shared TypeScript Interfaces
-│   └── index.ts              # Definitions for Order, Coupon, RewardTier
+├── types/ # Shared TypeScript Interfaces
+│ └── index.ts # Definitions for Order, Coupon, RewardTier
 │
-└── __tests__/              # Proof of Quality
-    ├── nth-logic.test.ts     # Specifically tests if N=4 triggers a reward
-    └── probability.test.ts   # Verifies the 80/15/5 distribution split
-
+└── **tests**/ # Proof of Quality
+├── nth-logic.test.ts # Specifically tests if N=4 triggers a reward
+└── probability.test.ts # Verifies the 80/15/5 distribution split
 
 ---
 
@@ -118,14 +117,87 @@ src/
 - once the folder structure created and logic what i want for this backend, i have explain to gemini, based on that I generated prompt for each of the functionality.
 - so my thought process build while working with cursor, antigravity and other ai coding tools is that so they are like jr developer with vast knowledge of the coding, so i provide proper roadmap, then i just have to look the code it generate and add patches where it distracted from the expected roadmap.
 - so I have gave core logic for backend, like checkout, discount , cart etc + most importantly full folder structure , it cursor generated the 80% code based on the requirement.
-- othr 20%, i got it through the iterations. 
-
+- othr 20%, i got it through the iterations.
 
 => so apart from requirement mention in doc, i have found out that there is requirement of integration testing for coupen double spend , so i need to ensure that once a coupon is used in a successful checkout, it cannot be reused for a subsequent order. so I have implement this test.
-
 
 ---
 
 ## 5. what am i thinking write now for further implementation
 
 - so in current implementation, i feel there are few changes required like user friendly messags, some response schema might need to change but for now, its good to go and ready for the frontend implementation.
+
+---
+
+---
+
+---
+
+# FRONTEND IMPLEMENTATION THINKING
+
+### how i want to approach the frontend?
+
+1. tools r&d:
+
+- first i will go for the tools(from react ecosystem) , which are suitable for this problem(usecase)
+- state : zustand -> Tracking the Sync Progress and Loot Box states across different pages without the boilerplate of Redux and easy to read , maintainable.
+- Styling: Tailwind CSS + Shadcn/UI
+- Animation: Framer Motion
+- Data Fetching & Validation: TanStack Query (React Query) + Zod
+- icons: lucide + lucide animate library
+- toast: Sonner
+- testing : Vitest(Test Runner) & React Testing Library (RTL)-> (Component Testing)
+
+2. folder structure :
+   src/
+   ├── app/ # Next.js App Router (File-based Routing)
+   │ ├── (shop)/ # Grouped routes for the store
+   │ │ ├── page.tsx # Home / Product List
+   │ │ └── checkout/ # Checkout flow page
+   │ ├── admin/ # Admin Dashboard (Stats & Manual Generation)
+   │ ├── layout.tsx # Global layout (Sidebar/Navbar/Decryption Bar)
+   │ └── globals.css # Tailwind & Shadcn global styles
+   │
+   ├── components/ # UI & Domain Components
+   │ ├── ui/ # Shadcn base components (Buttons, Dialogs, etc.)
+   │ ├── shared/ # Layout-specific components
+   │ │ ├── sidebar.tsx # Your "Funny" Sidebar with conversion triggers
+   │ │ └── decryption-bar.tsx # Top bar showing 01010 -> Decoded Text
+   │ └── features/ # Domain-specific logic-heavy components
+   │ ├── cart/ # Cart drawer & items
+   │ ├── checkout/ # Form logic & Reward Reveal overlay
+   │ └── rewards/ # "Loot Box" logic reveal animations
+   │
+   ├── hooks/ # Custom React Hooks
+   │ ├── use-exploration.ts # Logic for tracking visited routes (Decryption)
+   │ ├── use-cart-actions.ts # Wrappers for TanStack Query mutations
+   │ └── use-reward-reveal.ts # Logic for managing the unboxing sequence
+   │
+   ├── store/ # Zustand State Management (Atomic Stores)
+   │ ├── use-exploration-store.ts# State for 7/7 route progress
+   │ ├── use-cart-store.ts # Client-side cart state
+   │ └── use-reward-store.ts # Current "Loot Box" result & visibility
+   │
+   ├── lib/ # Infrastructure & Utilities
+   │ ├── api-client.ts # Axios/Fetch wrapper with TanStack Query config
+   │ ├── utils.ts # Shadcn merging (cn) & formatting
+   │ └── validators/ # Zod schemas (Shared with backend if possible)
+   │
+   ├── providers/ # React Context Providers
+   │ ├── query-provider.tsx # TanStack Query Client provider
+   │ └── theme-provider.tsx # Next-themes (Dark/Light mode)
+   │
+   ├── types/ # TypeScript Definitions
+   │ └── ecommerce.d.ts # Order, Reward, Product interfaces
+   │
+   └── **tests**/ # Testing Suite (Vitest + RTL)
+   ├── unit/ # Testing pure functions & Zustand actions
+   ├── components/ # Testing UI components (Loot Box reveal)
+   └── setup.ts # Vitest global setup (MSW, RTL matchers)
+3. theme selection
+- so go through few website to decide layout, color theme etc
+- for example : dribble , and ui ideas
+- i have finalise the bento grid layout , it gives modern minimalist feeling and i like that.
+4. code implementation
+
+5. test cases
